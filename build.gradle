@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group = 'fr.aimcvent'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'com.github.aimcvent:kernel-api:1.1.0'
+    implementation 'com.hazelcast:hazelcast:5.5.0'
+}
+
+def targetJavaVersion = 25
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    exclude('META-INF/LICENSE', 'META-INF/NOTICE')
+
+    manifest {
+        attributes(
+                'Main-Class': 'fr.aimcvent.bootstrap.core.launcher.BootstrapLauncher'
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath
+                .findAll { !it.name.endsWith('.pom') }
+                .collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
