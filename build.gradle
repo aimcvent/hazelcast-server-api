@@ -31,12 +31,6 @@ jar {
 
     exclude('META-INF/LICENSE', 'META-INF/NOTICE')
 
-    manifest {
-        attributes(
-                'Main-Class': 'fr.aimcvent.bootstrap.core.launcher.BootstrapLauncher'
-        )
-    }
-
     from {
         configurations.runtimeClasspath
                 .findAll { !it.name.endsWith('.pom') }
